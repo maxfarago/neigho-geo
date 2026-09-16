@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c0a10">
+  <meta name="description" content="max.horse arcade. Pick a cart. Play.">
+  <title>max.horse</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230c0a10'/%3E%3Crect x='4' y='4' width='24' height='24' rx='2' fill='none' stroke='%23e4c56a' stroke-width='2'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div id="splash" class="splash" aria-hidden="false">
+    <div class="burst" aria-hidden="true"></div>
+    <p class="splash-kicker">max.horse</p>
+    <h1 class="chrome">MAX<br>HORSEPOWER</h1>
+    <p class="splash-skip">press any key</p>
+  </div>
+
+  <div id="arcade" class="arcade">
+    <header class="top">
+      <p class="mark">max.horse</p>
+      <button type="button" id="signin" class="ghost" disabled title="Accounts come next">Sign in</button>
+    </header>
+
+    <div class="cabinet">
+      <p class="bezel-label">select game</p>
+      <div class="bay">
+        <div id="shelf" class="shelf" role="listbox" aria-label="Games"></div>
+        <div class="rail" aria-hidden="true"></div>
+      </div>
+      <p id="press" class="press" hidden>PRESS START</p>
+    </div>
+
+    <section id="detail" class="detail" aria-live="polite">
+      <h2 id="title"></h2>
+      <p id="tagline"></p>
+      <div class="actions">
+        <a id="play" class="play" href="#">Play</a>
+        <button type="button" id="suggest" class="suggest">Suggest</button>
+      </div>
+    </section>
+  </div>
+
+  <mh-request-modal></mh-request-modal>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

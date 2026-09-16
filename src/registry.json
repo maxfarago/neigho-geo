@@ -1,0 +1,92 @@
+{
+  "games": [
+    {
+      "id": "umatamari",
+      "title": "Umatamari",
+      "tagline": "a pile of horse",
+      "status": "live",
+      "board": "64",
+      "playUrl": "https://umatamari.max.horse",
+      "cart": { "color": "#ff4f8b" },
+      "presets": [
+        {
+          "id": "prop",
+          "label": "New prop",
+          "description": "Something new to roll up",
+          "placeholder": "A horse on a pool float, about the size of a bench…"
+        },
+        {
+          "id": "gameplay",
+          "label": "Gameplay",
+          "description": "How it plays",
+          "placeholder": "What if Max could…"
+        },
+        {
+          "id": "visuals",
+          "label": "Visuals",
+          "description": "Look, camera, juice",
+          "placeholder": "The grass could…"
+        },
+        {
+          "id": "sound",
+          "label": "Sound",
+          "description": "Music and hits",
+          "placeholder": "The nay should…"
+        },
+        {
+          "id": "bug",
+          "label": "Bug",
+          "description": "Something's off",
+          "placeholder": "When I roll into…"
+        },
+        {
+          "id": "other",
+          "label": "Other",
+          "description": "Doesn't fit a chip",
+          "placeholder": "I wish…"
+        }
+      ]
+    },
+    {
+      "id": "unbridled",
+      "title": "Unbridled",
+      "tagline": "hit the trail",
+      "status": "live",
+      "board": "64",
+      "playUrl": "https://unbridled.max.horse",
+      "cart": { "color": "#e85a28" },
+      "presets": [
+        {
+          "id": "gameplay",
+          "label": "Gameplay",
+          "description": "How it runs",
+          "placeholder": "What if the horse could…"
+        },
+        {
+          "id": "visuals",
+          "label": "Visuals",
+          "description": "Trail, horse, paintings",
+          "placeholder": "The desert could…"
+        },
+        {
+          "id": "sound",
+          "label": "Sound",
+          "description": "Hooves and shouts",
+          "placeholder": "The gallop should…"
+        },
+        {
+          "id": "bug",
+          "label": "Bug",
+          "description": "Something's off",
+          "placeholder": "When I jump a fence…"
+        },
+        {
+          "id": "other",
+          "label": "Other",
+          "description": "Doesn't fit a chip",
+          "placeholder": "I wish…"
+        }
+      ]
+    }
+  ]
+}
