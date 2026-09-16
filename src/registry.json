@@ -3,10 +3,11 @@
     {
       "id": "umatamari",
       "title": "Umatamari",
-      "tagline": "a pile of horse",
+      "tagline": "A pile of horse",
       "status": "live",
       "board": "64",
       "playUrl": "https://umatamari.max.horse",
+      "still": "/stills/umatamari.jpg",
       "cart": { "color": "#ff4f8b" },
       "presets": [
         {
@@ -50,10 +51,11 @@
     {
       "id": "unbridled",
       "title": "Unbridled",
-      "tagline": "hit the trail",
+      "tagline": "Ride with me",
       "status": "live",
       "board": "64",
       "playUrl": "https://unbridled.max.horse",
+      "still": "/stills/unbridled.jpg",
       "cart": { "color": "#e85a28" },
       "presets": [
         {

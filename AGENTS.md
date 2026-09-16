@@ -17,10 +17,11 @@ Live carts:
 
 ```
 index.html
-src/main.js           splash, shelf, attract, input
+src/main.js           still grid, overlay, keyboard
 src/style.css
-src/registry.json     carts, play urls, suggest presets
+src/registry.json     games, play urls, stills, suggest presets
 src/request-modal.js  <mh-request-modal>; submit disabled until requests ship
+public/stills/        square title stills
 ```
 
 Adding a cart is a registry row. No platform logic for a new game.
@@ -32,7 +33,7 @@ Adding a cart is a registry row. No platform logic for a new game.
 - Playing never requires an account.
 - Do not iframe games.
 - Owner exclusively commits and pushes. Do not commit, push, open PRs, or deploy.
-- `umatamari.max.horse` DNS may not exist yet. Do not point the apex at this project until that host serves the game.
+- `umatamari.max.horse` is live. Do not point the apex at this project until ready.
 
 ## Run
 

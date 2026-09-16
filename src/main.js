@@ -3,201 +3,94 @@ import { openRequest } from "./request-modal.js";
 import "./style.css";
 
 const games = registry.games.filter((g) => g.status !== "retired");
-const ATTRACT_MS = 30000;
-const SPLASH_KEY = "mh:splash";
+const grid = document.getElementById("grid");
 
-const shelf = document.getElementById("shelf");
-const title = document.getElementById("title");
-const tagline = document.getElementById("tagline");
-const play = document.getElementById("play");
-const suggest = document.getElementById("suggest");
-const press = document.getElementById("press");
-const splash = document.getElementById("splash");
-const arcade = document.getElementById("arcade");
+let selected = null;
 
-let index = Math.max(
-  0,
-  games.findIndex((g) => g.status === "live")
-);
-let attract = false;
-let attractTimer = 0;
-let idleHandle = 0;
-let lastPad = { x: 0, a: false };
-
-function current() {
-  return games[index];
-}
-
-function select(i, fromAttract) {
-  if (i < 0 || i >= games.length) return;
-  index = i;
-  if (!fromAttract) stopAttract();
-  render();
-}
-
-function render() {
-  const g = current();
-  for (const el of shelf.children) {
-    const on = el.dataset.id === g.id;
+function select(id) {
+  selected = id;
+  for (const el of grid.children) {
+    const on = el.dataset.id === id;
     el.classList.toggle("on", on);
     el.setAttribute("aria-selected", String(on));
-    if (on && !attract) el.focus({ preventScroll: true });
   }
-  title.textContent = g.title;
-  tagline.textContent = g.tagline;
-  const live = g.status === "live";
-  play.href = live ? g.playUrl : "#";
-  play.classList.toggle("off", !live);
-  play.setAttribute("aria-disabled", String(!live));
-  suggest.disabled = !live;
-  arcade.dataset.board = g.board;
-  arcade.dataset.color = g.cart.color;
 }
 
-function cartEl(g, i) {
-  const b = document.createElement("button");
-  b.type = "button";
-  b.className = `cart cart-${g.board}${g.status !== "live" ? " soon" : ""}`;
-  b.dataset.id = g.id;
-  b.role = "option";
-  b.setAttribute("aria-label", g.title);
-  b.style.setProperty("--cart", g.cart.color);
-  b.innerHTML = `
-    <span class="cart-ridge"></span>
-    <span class="cart-body">
-      <span class="cart-label">
-        <span class="cart-sys">${g.board === "mvs" ? "MVS" : "64"}</span>
-        <span class="cart-title">${g.title}</span>
-      </span>
-    </span>
-    <span class="cart-edge"></span>
+function bindPress(el) {
+  const on = (e) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    el.classList.add("is-down");
+  };
+  const off = () => el.classList.remove("is-down");
+  el.addEventListener("pointerdown", on);
+  el.addEventListener("pointerup", off);
+  el.addEventListener("pointercancel", off);
+  el.addEventListener("pointerleave", off);
+}
+
+function tileEl(g) {
+  const el = document.createElement("article");
+  el.className = "tile" + (g.status !== "live" ? " soon" : "");
+  el.dataset.id = g.id;
+  el.setAttribute("aria-selected", "false");
+  el.innerHTML = `
+    <button type="button" class="shot" aria-label="${g.title}">
+      <img src="${g.still}" alt="${g.title}" width="1200" height="1200">
+    </button>
+    <div class="cover">
+      <h2>${g.title}</h2>
+      <p>${g.tagline}</p>
+      <div class="actions">
+        <a class="play" href="${g.status === "live" ? g.playUrl : "#"}">PLAY</a>
+        <button type="button" class="suggest">SUGGEST</button>
+      </div>
+    </div>
   `;
-  b.addEventListener("click", () => select(i));
-  b.addEventListener("dblclick", () => launch());
-  return b;
-}
-
-function launch() {
-  const g = current();
-  if (g.status !== "live") return;
-  stopAttract();
-  window.location.href = g.playUrl;
-}
-
-function bumpIdle() {
-  stopAttract();
-  window.clearTimeout(idleHandle);
-  idleHandle = window.setTimeout(startAttract, ATTRACT_MS);
-}
-
-function startAttract() {
-  if (document.body.classList.contains("modal-open")) {
-    bumpIdle();
-    return;
+  el.querySelector(".shot").addEventListener("click", () => select(g.id));
+  el.querySelector(".suggest").addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (g.status === "live") openRequest(g.id);
+  });
+  const play = el.querySelector(".play");
+  bindPress(play);
+  bindPress(el.querySelector(".suggest"));
+  if (g.status !== "live") {
+    play.setAttribute("aria-disabled", "true");
+    play.addEventListener("click", (e) => e.preventDefault());
   }
-  attract = true;
-  press.hidden = false;
-  arcade.classList.add("attract");
-  attractTimer = 0;
-}
-
-function stopAttract() {
-  if (!attract) return;
-  attract = false;
-  press.hidden = true;
-  arcade.classList.remove("attract");
-}
-
-function skipSplash() {
-  if (splash.hidden) return;
-  splash.hidden = true;
-  splash.setAttribute("aria-hidden", "true");
-  sessionStorage.setItem(SPLASH_KEY, "1");
-  bumpIdle();
-}
-
-function showSplash() {
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reduce || sessionStorage.getItem(SPLASH_KEY)) {
-    splash.hidden = true;
-    splash.setAttribute("aria-hidden", "true");
-    bumpIdle();
-    return;
-  }
-  splash.hidden = false;
-  splash.addEventListener("pointerdown", skipSplash);
-  splash.addEventListener("click", skipSplash);
+  return el;
 }
 
 function onKey(e) {
-  if (splash && !splash.hidden) {
-    e.preventDefault();
-    skipSplash();
-    return;
-  }
   if (document.body.classList.contains("modal-open")) return;
-  const k = e.key;
-  if (k === "ArrowLeft" || k === "a" || k === "A") {
+  const ids = games.map((g) => g.id);
+  const i = selected ? ids.indexOf(selected) : -1;
+  if (e.key === "ArrowLeft" || e.key === "ArrowUp" || e.key === "a" || e.key === "A") {
     e.preventDefault();
-    select((index - 1 + games.length) % games.length);
-  } else if (k === "ArrowRight" || k === "d" || k === "D") {
+    select(ids[(i - 1 + ids.length) % ids.length]);
+  } else if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "d" || e.key === "D") {
     e.preventDefault();
-    select((index + 1) % games.length);
-  } else if (k === "Enter" || k === " ") {
-    e.preventDefault();
-    launch();
-  } else if (k === "s" || k === "S") {
-    openRequest(current().id);
-  }
-  bumpIdle();
-}
-
-function pollPad() {
-  const pad = navigator.getGamepads?.()[0];
-  if (pad) {
-    const x =
-      pad.buttons[14]?.pressed ? -1 : pad.buttons[15]?.pressed ? 1 : Math.round(pad.axes[0] || 0);
-    const a = pad.buttons[0]?.pressed;
-    if (x !== lastPad.x && x) {
-      select((index + x + games.length) % games.length);
-      bumpIdle();
+    select(ids[(i + 1) % ids.length]);
+  } else if ((e.key === "Enter" || e.key === " ") && selected) {
+    const g = games.find((x) => x.id === selected);
+    if (g?.status === "live") {
+      e.preventDefault();
+      window.location.href = g.playUrl;
     }
-    if (a && !lastPad.a) {
-      if (splash && !splash.hidden) skipSplash();
-      else launch();
-      bumpIdle();
-    }
-    lastPad = { x, a };
+  } else if ((e.key === "s" || e.key === "S") && selected) {
+    openRequest(selected);
   }
-  if (attract) {
-    attractTimer += 1;
-    if (attractTimer % 90 === 0) select((index + 1) % games.length, true);
-  }
-  requestAnimationFrame(pollPad);
 }
 
 function boot() {
-  shelf.replaceChildren(...games.map(cartEl));
-  render();
-  suggest.addEventListener("click", () => openRequest(current().id));
-  play.addEventListener("click", (e) => {
-    if (current().status !== "live") e.preventDefault();
-    else bumpIdle();
-  });
+  grid.replaceChildren(...games.map(tileEl));
   window.addEventListener("keydown", onKey);
-  window.addEventListener("pointerdown", bumpIdle);
-  window.addEventListener("mousemove", bumpIdle, { passive: true });
-  window.addEventListener("gamepadconnected", bumpIdle);
   const params = new URLSearchParams(location.search);
   const suggestId = params.get("suggest");
-  showSplash();
   if (suggestId && games.some((g) => g.id === suggestId)) {
-    skipSplash();
-    const i = games.findIndex((g) => g.id === suggestId);
-    if (i >= 0) select(i);
+    select(suggestId);
     openRequest(suggestId, params.get("preset") || undefined);
   }
-  requestAnimationFrame(pollPad);
 }
 
 boot();
