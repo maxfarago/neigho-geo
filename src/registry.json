@@ -7,6 +7,8 @@
       "status": "live",
       "board": "64",
       "playUrl": "https://umatamari.max.horse",
+      "repo": "maxfarago/umatamari",
+      "screen": "Umatamari is a 3D horse Katamari-like. The player is a horse who rolls up props into a growing pile. Suggestions should be about this game: new props, feel, camera, sound, bugs.",
       "still": "/stills/umatamari.jpg",
       "cart": { "color": "#ff4f8b" },
       "presets": [
@@ -55,6 +57,8 @@
       "status": "live",
       "board": "64",
       "playUrl": "https://unbridled.max.horse",
+      "repo": "maxfarago/unbridled",
+      "screen": "Unbridled is a 3D horseback riding game: trail, horse, paintings, gallop. Suggestions should be about this game: how it rides, looks, sounds, or bugs.",
       "still": "/stills/unbridled.jpg",
       "cart": { "color": "#e85a28" },
       "presets": [

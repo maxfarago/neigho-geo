@@ -307,7 +307,9 @@ button:disabled { cursor: not-allowed; opacity: 0.45 }
 .mh-count { align-self: flex-end; font-size: 11px }
 .mh-count.short { color: var(--red) }
 .mh-credit { font-size: 13px; display: flex; gap: 8px; align-items: center }
-.mh-soon { margin: 0; font-size: 13px; color: var(--red) }
+.mh-status { margin: 0; font-size: 13px }
+.mh-status.err { color: var(--red) }
+.mh-status.ok { color: var(--paper) }
 .mh-send {
   min-height: 44px;
   border: 0;
