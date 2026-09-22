@@ -1,0 +1,1 @@
+ALTER TABLE requests ADD COLUMN spec_retried INTEGER NOT NULL DEFAULT 0;
