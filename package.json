@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "db:migrate": "wrangler d1 migrations apply neigho-geo --local"
+    "db:migrate": "wrangler d1 migrations apply neigho-geo --local",
+    "db:migrate:remote": "wrangler d1 migrations apply neigho-geo --remote",
+    "deploy": "vite build && wrangler deploy"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.56.0",
