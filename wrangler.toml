@@ -1,4 +1,5 @@
 name = "neigho-geo"
+account_id = "c7698f65669d1881d1f02fd4bcbc250a"
 compatibility_date = "2026-09-16"
 main = "./worker/index.js"
 
@@ -12,5 +13,5 @@ run_worker_first = ["/api/*"]
 [[d1_databases]]
 binding = "DB"
 database_name = "neigho-geo"
-database_id = "local-dev-only"
+database_id = "2722cb8d-37d5-4aa7-b27e-615f467a4bed"
 migrations_dir = "migrations"
