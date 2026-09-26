@@ -14,7 +14,7 @@ const SHAPE = `# <title, <= 60 characters>
 - 0 to 5 items
 
 ## Touches
-- areas of the repo this would change`;
+- \`path/from/repo/root.ext\` — what changes there`;
 
 function specOk(spec) {
   const t = String(spec || "").trim();

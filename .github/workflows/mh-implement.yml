@@ -1,0 +1,44 @@
+name: mh-implement
+
+on:
+  workflow_call:
+    inputs:
+      issue_number:
+        required: true
+        type: number
+      request_id:
+        required: false
+        type: string
+        default: ""
+    secrets:
+      ANTHROPIC_API_KEY:
+        required: true
+
+jobs:
+  implement:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - uses: actions/checkout@v4
+        with:
+          repository: maxfarago/neigho-geo
+          path: .mh
+          sparse-checkout: scripts/implement.mjs
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Implement spec
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          REQUEST_ID: ${{ inputs.request_id }}
+          GH_REPO: ${{ github.repository }}
+        run: node .mh/scripts/implement.mjs

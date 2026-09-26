@@ -5,6 +5,7 @@ main = "./worker/index.js"
 
 [vars]
 SCREEN_MODEL = "claude-haiku-4-5-20251001"
+OWNER_GITHUB_LOGIN = "maxfarago"
 
 [assets]
 not_found_handling = "single-page-application"
