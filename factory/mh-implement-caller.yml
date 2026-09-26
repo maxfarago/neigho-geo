@@ -1,0 +1,19 @@
+name: mh-implement
+
+on:
+  repository_dispatch:
+    types: [mh-implement]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
+jobs:
+  implement:
+    uses: maxfarago/neigho-geo/.github/workflows/mh-implement.yml@master
+    with:
+      issue_number: ${{ github.event.client_payload.issue_number }}
+      request_id: ${{ github.event.client_payload.request_id }}
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

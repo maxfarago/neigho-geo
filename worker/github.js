@@ -9,6 +9,58 @@ function headers(env) {
   };
 }
 
+function hex(buf) {
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+export async function verifyGithubSignature(raw, header, secret) {
+  if (!secret || !header || !header.startsWith("sha256=")) return false;
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const mac = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(raw));
+  const expected = `sha256=${hex(mac)}`;
+  if (expected.length !== header.length) return false;
+  let n = 0;
+  for (let i = 0; i < expected.length; i++) n |= expected.charCodeAt(i) ^ header.charCodeAt(i);
+  return n === 0;
+}
+
+export function requestIdFromIssue(body) {
+  const m = String(body || "").match(/<!-- mh:request:(\d+) -->/);
+  return m ? Number(m[1]) : null;
+}
+
+export async function fetchIssue(repo, number, env) {
+  const res = await fetch(`https://api.github.com/repos/${repo}/issues/${number}`, {
+    headers: headers(env),
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(`github issue ${res.status}: ${t.slice(0, 200)}`);
+  }
+  return res.json();
+}
+
+export async function dispatchImplement(repo, payload, env) {
+  const res = await fetch(`https://api.github.com/repos/${repo}/dispatches`, {
+    method: "POST",
+    headers: { ...headers(env), "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event_type: "mh-implement",
+      client_payload: payload,
+    }),
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(`github dispatch ${res.status}: ${t.slice(0, 200)}`);
+  }
+}
+
 function decodeBase64(s) {
   const bin = atob(String(s).replace(/\s/g, ""));
   return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));

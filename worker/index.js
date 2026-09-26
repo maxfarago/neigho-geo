@@ -1,6 +1,7 @@
 import registry from "../src/registry.json";
 import { screenRequest } from "./screen.js";
 import { writeSpec } from "./spec.js";
+import { handleGithubWebhook } from "./webhook.js";
 
 const MIN = 20;
 const MAX = 800;
@@ -117,6 +118,9 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     try {
+      if (request.method === "POST" && url.pathname === "/api/github/webhook") {
+        return await handleGithubWebhook(request, env, ctx, registry);
+      }
       if (request.method === "POST" && url.pathname === "/api/requests") {
         return await createRequest(request, env, ctx);
       }
