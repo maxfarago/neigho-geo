@@ -42,7 +42,7 @@ function tileEl(g) {
       <p>${g.tagline}</p>
       <div class="actions">
         <a class="play" href="${g.status === "live" ? g.playUrl : "#"}">PLAY</a>
-        <button type="button" class="suggest">SUGGEST</button>
+        <button type="button" class="suggest">ADD FEATURE</button>
       </div>
     </div>
   `;

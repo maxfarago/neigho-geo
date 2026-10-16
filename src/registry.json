@@ -14,37 +14,37 @@
       "presets": [
         {
           "id": "prop",
-          "label": "New prop",
+          "label": "NEW ITEM",
           "description": "Something new to roll up",
           "placeholder": "A horse on a pool float, about the size of a bench…"
         },
         {
           "id": "gameplay",
-          "label": "Gameplay",
+          "label": "GAMEPLAY",
           "description": "How it plays",
           "placeholder": "What if Max could…"
         },
         {
           "id": "visuals",
-          "label": "Visuals",
+          "label": "VISUALS",
           "description": "Look, camera, juice",
           "placeholder": "The grass could…"
         },
         {
           "id": "sound",
-          "label": "Sound",
+          "label": "SOUND",
           "description": "Music and hits",
           "placeholder": "The nay should…"
         },
         {
           "id": "bug",
-          "label": "Bug",
+          "label": "BUG",
           "description": "Something's off",
           "placeholder": "When I roll into…"
         },
         {
           "id": "other",
-          "label": "Other",
+          "label": "OTHER",
           "description": "Doesn't fit a chip",
           "placeholder": "I wish…"
         }
@@ -64,31 +64,31 @@
       "presets": [
         {
           "id": "gameplay",
-          "label": "Gameplay",
+          "label": "GAMEPLAY",
           "description": "How it runs",
           "placeholder": "What if the horse could…"
         },
         {
           "id": "visuals",
-          "label": "Visuals",
+          "label": "VISUALS",
           "description": "Trail, horse, paintings",
           "placeholder": "The desert could…"
         },
         {
           "id": "sound",
-          "label": "Sound",
+          "label": "SOUND",
           "description": "Hooves and shouts",
           "placeholder": "The gallop should…"
         },
         {
           "id": "bug",
-          "label": "Bug",
+          "label": "BUG",
           "description": "Something's off",
           "placeholder": "When I jump a fence…"
         },
         {
           "id": "other",
-          "label": "Other",
+          "label": "OTHER",
           "description": "Doesn't fit a chip",
           "placeholder": "I wish…"
         }
