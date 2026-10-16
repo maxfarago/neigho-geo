@@ -1,7 +1,28 @@
 import registry from "./registry.json";
+import boxIcon from "pixelarticons/svg/box.svg?raw";
+import gamepadIcon from "pixelarticons/svg/gamepad.svg?raw";
+import imageIcon from "pixelarticons/svg/image.svg?raw";
+import musicIcon from "pixelarticons/svg/music.svg?raw";
+import bugIcon from "pixelarticons/svg/bug.svg?raw";
+import moreIcon from "pixelarticons/svg/more-horizontal.svg?raw";
 
 const MIN = 20;
 const MAX = 800;
+
+const ICONS = {
+  prop: boxIcon,
+  gameplay: gamepadIcon,
+  visuals: imageIcon,
+  sound: musicIcon,
+  bug: bugIcon,
+  other: moreIcon,
+};
+
+function presetPlaceholder(preset) {
+  const description = preset.description?.replace(/[.!?]+$/, "");
+  return [description && `${description}.`, preset.placeholder && `Ex: ${preset.placeholder}`]
+    .filter(Boolean).join(" ");
+}
 
 export function openRequest(gameId, presetId) {
   const el = document.querySelector("mh-request-modal");
@@ -17,37 +38,36 @@ class MhRequestModal extends HTMLElement {
 
   connectedCallback() {
     this.innerHTML = `
-      <dialog class="mh-dialog">
+      <dialog class="mh-dialog" aria-labelledby="mh-request-title">
         <form method="dialog" class="mh-form">
           <header>
-            <p class="mh-kicker"></p>
-            <h2>Suggest</h2>
+            <figure class="mh-game">
+              <img class="mh-game-image" alt="" width="80" height="80">
+            </figure>
+            <div class="mh-heading">
+              <h2 id="mh-request-title">ADD FEATURE</h2>
+              <p class="mh-game-name"></p>
+            </div>
             <button type="button" class="mh-x" aria-label="Close">×</button>
           </header>
           <div class="mh-chips" role="listbox" aria-label="Preset"></div>
           <label class="mh-label">
-            <span>What should we add</span>
+            <span>Describe it</span>
             <textarea name="body" rows="5" maxlength="${MAX}"></textarea>
-            <span class="mh-count">0 / ${MAX}</span>
-          </label>
-          <label class="mh-credit">
-            <input type="checkbox" name="credit" checked>
-            Credit me publicly if this ships
           </label>
           <p class="mh-status" hidden></p>
-          <button type="button" class="mh-send" disabled>Submit</button>
+          <button type="button" class="mh-send" disabled>SUBMIT</button>
         </form>
       </dialog>
     `;
     this.dialog = this.querySelector("dialog");
-    this.kicker = this.querySelector(".mh-kicker");
+    this.gameImage = this.querySelector(".mh-game-image");
+    this.gameName = this.querySelector(".mh-game-name");
     this.chips = this.querySelector(".mh-chips");
     this.textarea = this.querySelector("textarea");
-    this.count = this.querySelector(".mh-count");
-    this.credit = this.querySelector('input[name="credit"]');
     this.status = this.querySelector(".mh-status");
     this.send = this.querySelector(".mh-send");
-    this.textarea.addEventListener("input", () => this.#count());
+    this.textarea.addEventListener("input", () => this.#updateSubmitState());
     this.send.addEventListener("click", () => this.#submit());
     this.querySelector(".mh-x").addEventListener("click", () => this.dialog.close());
     this.dialog.addEventListener("close", () => {
@@ -60,17 +80,16 @@ class MhRequestModal extends HTMLElement {
     if (!game) return;
     this.#game = game;
     this.#busy = false;
-    this.kicker.textContent = game.title;
+    this.gameImage.src = game.still;
+    this.gameName.textContent = game.title;
     this.#preset = game.presets.find((p) => p.id === presetId) || game.presets[0];
     this.#renderChips();
     this.textarea.value = "";
-    this.textarea.placeholder = this.#preset.placeholder || "";
+    this.textarea.placeholder = presetPlaceholder(this.#preset);
     this.textarea.disabled = false;
-    this.credit.checked = true;
-    this.credit.disabled = false;
     this.send.hidden = false;
     this.#setStatus("");
-    this.#count();
+    this.#updateSubmitState();
     document.body.classList.add("modal-open");
     this.dialog.showModal();
     this.textarea.focus();
@@ -86,21 +105,24 @@ class MhRequestModal extends HTMLElement {
         b.setAttribute("aria-selected", String(p.id === this.#preset.id));
         b.dataset.id = p.id;
         b.disabled = this.#busy;
-        b.innerHTML = `<b>${p.label}</b><span>${p.description}</span>`;
+        b.innerHTML = `<span class="mh-chip-icon" aria-hidden="true">${ICONS[p.id] || ICONS.other}</span><span>${p.label}</span>`;
+        b.querySelector("svg").setAttribute("focusable", "false");
         b.addEventListener("click", () => {
           this.#preset = p;
-          this.textarea.placeholder = p.placeholder || "";
-          this.#renderChips();
+          this.textarea.placeholder = presetPlaceholder(p);
+          for (const chip of this.chips.children) {
+            const selected = chip.dataset.id === p.id;
+            chip.classList.toggle("on", selected);
+            chip.setAttribute("aria-selected", String(selected));
+          }
         });
         return b;
       })
     );
   }
 
-  #count() {
+  #updateSubmitState() {
     const n = this.textarea.value.trim().length;
-    this.count.textContent = `${n} / ${MAX}`;
-    this.count.classList.toggle("short", n > 0 && n < MIN);
     this.send.disabled = this.#busy || n < MIN;
   }
 
@@ -116,7 +138,6 @@ class MhRequestModal extends HTMLElement {
     this.#busy = true;
     this.send.disabled = true;
     this.textarea.disabled = true;
-    this.credit.disabled = true;
     this.#renderChips();
     this.#setStatus("");
     try {
@@ -127,7 +148,7 @@ class MhRequestModal extends HTMLElement {
           gameId: this.#game.id,
           presetId: this.#preset.id,
           body,
-          credit: this.credit.checked,
+          credit: false,
         }),
       });
       if (res.status === 429) {
@@ -170,9 +191,8 @@ class MhRequestModal extends HTMLElement {
   #fail(msg) {
     this.#busy = false;
     this.textarea.disabled = false;
-    this.credit.disabled = false;
     this.#renderChips();
-    this.#count();
+    this.#updateSubmitState();
     this.#setStatus(msg, "err");
   }
 }
